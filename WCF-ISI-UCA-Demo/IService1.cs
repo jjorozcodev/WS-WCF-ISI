@@ -20,8 +20,9 @@ namespace WCF_ISI_UCA_Demo
         CompositeType GetDataUsingDataContract(CompositeType composite);
 
         // TODO: Add your service operations here
+        [OperationContract]
+        string ValidateLogin(string user, string pwd);
     }
-
 
     // Use a data contract as illustrated in the sample below to add composite types to service operations.
     [DataContract]

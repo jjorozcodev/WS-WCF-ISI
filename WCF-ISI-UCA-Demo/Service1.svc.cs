@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -28,6 +30,47 @@ namespace WCF_ISI_UCA_Demo
                 composite.StringValue += "Suffix";
             }
             return composite;
+        }
+
+        SqlConnection con = new SqlConnection("Data Source=OROZCODEV\\OROZCODEV; Initial Catalog = WCF_Test; User = sa; Password = 123;");
+
+        public string ValidateLogin(string user, string pwd)
+        {
+            string mensaje = "";
+            List<string> UserPassword = new List<string>();
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("SELECT * FROM USUARIOS WHERE USERNAME = @user AND PASSWORDUSER = @pass", con);
+                cmd.Parameters.AddWithValue("@user", user);
+                cmd.Parameters.AddWithValue("@pass", pwd);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                if(dt.Rows.Count > 0)
+                {
+                    mensaje = "Usuario encontrado.";
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string name = dt.Rows[i]["Username"].ToString();
+                        string pass = dt.Rows[i]["PasswordUser"].ToString();
+
+                        UserPassword.Add(name);
+                        UserPassword.Add(pass);
+                    }
+                }
+                else
+                {
+                    mensaje = "No hubo coincidencias";
+                }
+                con.Close();
+                
+            }
+
+            return mensaje;
         }
     }
 }
